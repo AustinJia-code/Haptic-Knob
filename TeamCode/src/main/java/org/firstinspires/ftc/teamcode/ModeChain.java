@@ -9,7 +9,7 @@ public class ModeChain {
     public ModeChain(){
         modeChain.add(Mode.FRICTIONLESS);   //0
         modeChain.add(Mode.FRICTION);       //1
-        modeChain.add(Mode.ROLLOVER);       //2
+        modeChain.add(Mode.DETENT);       //2
     }
     public Mode getMode() {
         return modeChain.get(index);

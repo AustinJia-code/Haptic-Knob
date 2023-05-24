@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
 public enum Mode {
-    FRICTION, FRICTIONLESS, ROLLOVER
+    FRICTION, FRICTIONLESS, DETENT, INPUT
 }
