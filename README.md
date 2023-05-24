@@ -1,10 +1,9 @@
-## GOING GLOBOL
+## GYAT!
 
 ToDo:
 
-- Line Sensor Localization
-- 2 Wheel Odometry?
-  - IMU Multithreading
-  - Sensor MultiThreading
+- Friction
+- Frictionless
+- Rollover
   
-  ✓ Add Robot Centric Toggle 
+  ✓ Groundwork
