@@ -4,6 +4,7 @@ ToDo:
 
 - Friction
 - Frictionless
-- Rollover
+- Detent
+- Display
   
   ✓ Groundwork

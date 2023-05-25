@@ -2,18 +2,19 @@ package org.firstinspires.ftc.teamcode;
 
 public class Constants {
     public static class Knob{
+        /** Ticks increase clockwise */
         public static double TICKS = 384.5;
     }
     public static class Friction{
         public static double RANGE_DEGREES = 180;
         public static double RANGE_TICKS = RANGE_DEGREES / 360.0 * Knob.TICKS;
-        public static int LEFT_BOUND = (int) (-1 * RANGE_TICKS / 2.0);
-        public static int RIGHT_BOUND = (int) (1 * RANGE_TICKS / 2.0);
+        public static int LEFT_BOUND_TICKS = (int) (-1 * RANGE_TICKS / 2.0);
+        public static int RIGHT_BOUND_TICKS = (int) (1 * RANGE_TICKS / 2.0);
         public static double DEADZONE_DEGREES = 2.0;
-        public static double DEADZONE_TICKS = DEADZONE_DEGREES / 360.0 * Knob.TICKS;
-        public static double K_P = 1 / DEADZONE_TICKS;
+        public static double DEADZONE_SCALED = DEADZONE_DEGREES / RANGE_DEGREES;
+        public static double K_P = 1 / DEADZONE_SCALED;
     }
-    public static class FRICTIONLESS{
+    public static class Frictionless {
         public static double RANGE_DEGREES = 180;
         public static double RANGE_TICKS = RANGE_DEGREES / 360.0 * Knob.TICKS;
         public static double DRIVE_POWER = 0.1;
