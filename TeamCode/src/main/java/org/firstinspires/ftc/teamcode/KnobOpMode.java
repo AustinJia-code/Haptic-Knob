@@ -43,5 +43,6 @@ public class KnobOpMode extends OpMode {
 
         telemetry.addData("Mode: ", modeChain.getMode());
         telemetry.addData("Current Pos: ", knob.getOutput());
+        telemetry.addData("Power: ", knob.getPower());
     }
 }

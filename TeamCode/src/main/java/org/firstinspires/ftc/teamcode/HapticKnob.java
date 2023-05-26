@@ -38,6 +38,13 @@ public class HapticKnob{
     }
 
     /**
+     * @return Knob's set power, [-1, 1]
+     */
+    public double getPower(){
+        return knob.getPower();
+    }
+
+    /**
      * @return Output generated from various knob drive modes
      */
     public double getOutput(){
@@ -47,12 +54,12 @@ public class HapticKnob{
     /**
      * Calculates current tick
      * Runs motor power according to the drive mode parameter
-     * Drive modes defined in {@link org.firstinspires.ftc.teamcode.Mode}
      *
      * Set output equal to the drive mode's returned double
      *
-     * @param mode Drive mode required of the knob (See: enum Mode.java)
-     * @param input User input, such as from a game pad, used for some drive modes
+     * @param mode Drive mode required of the knob
+     * @param input User input, such as from a game pad, used for some drive modes, [-1, 1]
+     * @see {@link org.firstinspires.ftc.teamcode.Mode}
      */
     public void drive(Mode mode, double input){
         currentTick = knob.getCurrentPosition() - offset;
@@ -101,7 +108,7 @@ public class HapticKnob{
      *
      * Sets knob power to 0, ideally spinning freely
      *
-     * @return Amount of times the knob has travelled over defined range
+     * @return Amount of times the knob has travelled over defined range, [-inf, inf]
      */
     public double frictionless() {
         //TODO: Cook up a good way to imitate frictionless on non-brushless
@@ -119,20 +126,19 @@ public class HapticKnob{
      * Example: A detent of 12 sections would match an analog clock with the 12 replaced with 0, and the knob would seek to snap to the numbers
      * Powers motor towards the nearest section border, proportional to it's distance
      *
-     * @return Section border the knob is nearest to
+     * @return Section border the knob is nearest to, [0, {@link org.firstinspires.ftc.teamcode.Constants.Detent.SECTIONS} - 1]
      */
     public double detent(){
         double positionInSection = (double) (Math.abs(currentTick) % Constants.Detent.SECTION_RANGE_TICKS) / Constants.Detent.SECTION_RANGE_TICKS;
-
         double distanceToSnap =
                 positionInSection < 0.5 ? -1 * Math.signum(currentTick) * positionInSection : Math.signum(currentTick) * (1 - positionInSection);
+
         knob.setPower(distanceToSnap * Constants.Detent.K_P);
 
-        double temp = currentTick % Constants.Knob.TICKS;
-        if(temp < 0) temp += Constants.Knob.TICKS;
-        else if(temp > Constants.Knob.TICKS) temp -= Constants.Knob.TICKS;
+        double temp = currentTick % Constants.Knob.TICKS;                   // get rotation of the knob, regardless of which revolution it's on
+        if(temp < 0) temp += Constants.Knob.TICKS;                          // if the rotation was negative, normalize it to [0, Knob.TICKS]
 
-        temp = Math.round(temp / Constants.Detent.SECTION_RANGE_TICKS);
+        temp = Math.round(temp / Constants.Detent.SECTION_RANGE_TICKS);     // 
         if(temp > Constants.Detent.SECTIONS - 1){
             temp = 0;
         }
@@ -148,7 +154,7 @@ public class HapticKnob{
      * Powers the knob toward the input proportional to the distance
      *
      * @param input From user, such as from a game pad, [-1, 1]
-     * @return Knob's true position along defined range
+     * @return Knob's true position along defined range, [-1, 1]
      */
     public double input(double input){
         double targetTick = input * Constants.Input.RIGHT_BOUND_TICKS;
