@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.*;
 public class HapticKnob{
     private DcMotor knob;
     double output;
-    int currentTick;
+    int currentTick, previousTick;
     int offset;
 
     /**
@@ -62,6 +62,7 @@ public class HapticKnob{
      * @see {@link org.firstinspires.ftc.teamcode.Mode}
      */
     public void drive(Mode mode, double input){
+        previousTick = currentTick;
         currentTick = knob.getCurrentPosition() - offset;
         switch(mode){
             case FRICTION:
