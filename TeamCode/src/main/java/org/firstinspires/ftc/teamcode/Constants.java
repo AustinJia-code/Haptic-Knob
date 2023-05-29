@@ -25,7 +25,7 @@ public class Constants {
         public static int SECTION_RANGE_TICKS = (int) (Knob.TICKS / SECTIONS);
         public static double K_P = 0.1;
     }
-    public static class Input{
+    public static class Output {
         public static double RANGE_DEGREES = 180;
         public static double RANGE_TICKS = RANGE_DEGREES / 360 * Knob.TICKS;
         public static int LEFT_BOUND_TICKS = (int) (-1 * RANGE_TICKS / 2.0);

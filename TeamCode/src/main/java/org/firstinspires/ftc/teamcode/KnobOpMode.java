@@ -32,14 +32,14 @@ public class KnobOpMode extends OpMode {
     public void loop() {
         if(gamepad.wasJustPressed(RIGHT_BUMPER)){
             knob.resetTicks();
-            modeChain.nextMode();
+            knob.setMode(modeChain.nextMode());
         }
         if(gamepad.wasJustPressed(LEFT_BUMPER)){
             knob.resetTicks();
-            modeChain.previousMode();
+            knob.setMode(modeChain.previousMode());
         }
 
-        knob.drive(modeChain.getMode(), gamepad.getRightX());
+        knob.drive(gamepad.getRightX());
 
         telemetry.addData("Mode: ", modeChain.getMode());
         telemetry.addData("Current Pos: ", knob.getOutput());

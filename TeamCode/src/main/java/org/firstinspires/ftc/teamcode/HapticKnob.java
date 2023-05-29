@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Mode.FRICTION;
+
 import com.qualcomm.robotcore.hardware.*;
 
 public class HapticKnob{
-    private DcMotor knob;
+    private DcMotorEx knob;
     double output;
     int currentTick, previousTick;
+    double previousLoopStartMS, currentLoopStartMS, looptimeMs;
     int offset;
+    Mode mode;
 
     /**
      * Generates new Haptic Knob object:
@@ -18,10 +22,10 @@ public class HapticKnob{
      * @param hardwareMap of control hub
      */
     public HapticKnob(HardwareMap hardwareMap){
-        knob = hardwareMap.dcMotor.get("knob");
+        knob = hardwareMap.get(DcMotorEx.class, "Knob");
         knob.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        knob.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        knob.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        setMode(FRICTION);
 
         currentTick = knob.getCurrentPosition();
         output = 0.0;
@@ -52,18 +56,28 @@ public class HapticKnob{
     }
 
     /**
+     * @return loop time of drive method in milliseconds
+     */
+    public double getLooptimeMs(){return looptimeMs;}
+
+    /**
      * Calculates current tick
      * Runs motor power according to the drive mode parameter
      *
      * Set output equal to the drive mode's returned double
      *
-     * @param mode Drive mode required of the knob
      * @param input User input, such as from a game pad, used for some drive modes, [-1, 1]
      * @see {@link org.firstinspires.ftc.teamcode.Mode}
      */
-    public void drive(Mode mode, double input){
+    public void drive(double input){
         previousTick = currentTick;
         currentTick = knob.getCurrentPosition() - offset;
+
+        previousLoopStartMS = currentLoopStartMS;
+        currentLoopStartMS = System.currentTimeMillis();
+
+        looptimeMs = currentLoopStartMS - previousLoopStartMS;
+
         switch(mode){
             case FRICTION:
                 output = friction();
@@ -74,9 +88,26 @@ public class HapticKnob{
             case DETENT:
                 output = detent();
                 break;
-            case INPUT:
-                output = input(input);
+            case OUTPUT:
+                output = output(input);
                 break;
+        }
+    }
+
+    public void setMode(Mode mode){
+        this.mode = mode;
+
+        switch(mode){
+            case FRICTIONLESS:
+                knob.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                break;
+            case OUTPUT:
+                knob.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                knob.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                break;
+            default:
+                knob.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+                knob.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
     }
 
@@ -112,8 +143,9 @@ public class HapticKnob{
      * @return Amount of times the knob has travelled over defined range, [-inf, inf]
      */
     public double frictionless() {
+        double knobVelocity = (currentTick - previousTick) / looptimeMs;    //Expressed in ticks per millisecond
         //TODO: Cook up a good way to imitate frictionless on non-brushless
-        knob.setPower(0);
+        knob.setVelocity(knobVelocity);
 
         return currentTick / Constants.Frictionless.RANGE_TICKS;
     }
@@ -139,7 +171,7 @@ public class HapticKnob{
         double temp = currentTick % Constants.Knob.TICKS;                   // get rotation of the knob, regardless of which revolution it's on
         if(temp < 0) temp += Constants.Knob.TICKS;                          // if the rotation was negative, normalize it to [0, Knob.TICKS]
 
-        temp = Math.round(temp / Constants.Detent.SECTION_RANGE_TICKS);     // 
+        temp = Math.round(temp / Constants.Detent.SECTION_RANGE_TICKS);
         if(temp > Constants.Detent.SECTIONS - 1){
             temp = 0;
         }
@@ -148,19 +180,19 @@ public class HapticKnob{
     }
 
     /**
-     * Definition for "input" drive mode
-     * Constants defined in {@link org.firstinspires.ftc.teamcode.Constants.Input}
+     * Definition for "output" drive mode
+     * Constants defined in {@link Constants.Output}
      *
      * Calculates the knob's current position [-1, 1] along the defined range
-     * Powers the knob toward the input proportional to the distance
+     * Powers the knob toward the input proportional to the distance, "outputting" a visualizer
      *
      * @param input From user, such as from a game pad, [-1, 1]
      * @return Knob's true position along defined range, [-1, 1]
      */
-    public double input(double input){
-        double targetTick = input * Constants.Input.RIGHT_BOUND_TICKS;
-        knob.setPower((targetTick - currentTick) / Constants.Input.RANGE_TICKS * Constants.Input.K_P);
+    public double output(double input){
+        double targetTick = input * Constants.Output.RIGHT_BOUND_TICKS;
+        knob.setPower((targetTick - currentTick) / Constants.Output.RANGE_TICKS * Constants.Output.K_P);
 
-        return currentTick / Constants.Input.RIGHT_BOUND_TICKS;
+        return currentTick / Constants.Output.RIGHT_BOUND_TICKS;
     }
 }

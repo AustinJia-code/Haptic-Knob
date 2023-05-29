@@ -15,14 +15,16 @@ public class ModeChain {
         return modeChain.get(index);
     }
 
-    public void nextMode(){
+    public Mode nextMode(){
         if(index < modeChain.size()-1) index++;
         else index = 0;
+        return getMode();
     }
 
-    public void previousMode(){
+    public Mode previousMode(){
         if(index > 0) index--;
         else index = modeChain.size()-1;
+        return getMode();
     }
 
     public void setMode(Mode mode){
