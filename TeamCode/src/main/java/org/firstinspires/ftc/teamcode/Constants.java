@@ -18,6 +18,8 @@ public class Constants {
         public static double RANGE_DEGREES = 180;
         public static double RANGE_TICKS = RANGE_DEGREES / 360.0 * Knob.TICKS;
         public static double DRIVE_POWER = 0.1;
+        public static double K_P = 0.2;
+        public static double MAX_ACCELERATION = Knob.TICKS / 2.0;
     }
     public static class Detent{
         public static int SECTIONS = 6;

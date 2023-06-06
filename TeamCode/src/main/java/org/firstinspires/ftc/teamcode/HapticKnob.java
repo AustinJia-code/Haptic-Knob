@@ -10,6 +10,7 @@ public class HapticKnob{
     int currentTick, previousTick;
     double previousLoopStartMS, currentLoopStartMS, looptimeMs;
     int offset;
+    double previousKnobVelocity, knobVelocity;
     Mode mode;
 
     /**
@@ -98,9 +99,11 @@ public class HapticKnob{
         this.mode = mode;
 
         switch(mode){
+            /*
             case FRICTIONLESS:
                 knob.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
                 break;
+             */
             case OUTPUT:
                 knob.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
                 knob.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -143,9 +146,13 @@ public class HapticKnob{
      * @return Amount of times the knob has travelled over defined range, [-inf, inf]
      */
     public double frictionless() {
-        double knobVelocity = (currentTick - previousTick) / looptimeMs;    //Expressed in ticks per millisecond
-        //TODO: Cook up a good way to imitate frictionless on non-brushless
-        knob.setVelocity(knobVelocity);
+        previousKnobVelocity = knobVelocity;
+        knobVelocity = (currentTick - previousTick) / looptimeMs;    //Expressed in ticks per millisecond
+        double acceleration = knobVelocity - previousKnobVelocity;
+        
+        double power = knob.getPower() + (Constants.Frictionless.K_P * acceleration / Constants.Frictionless.MAX_ACCELERATION);
+
+        knob.setPower(power);
 
         return currentTick / Constants.Frictionless.RANGE_TICKS;
     }
