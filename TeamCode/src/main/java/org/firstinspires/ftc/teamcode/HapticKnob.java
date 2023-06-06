@@ -141,7 +141,9 @@ public class HapticKnob{
      * Definition for "frictionless" drive mode
      * Constants defined in {@link org.firstinspires.ftc.teamcode.Constants.Frictionless}
      *
-     * Sets knob power to 0, ideally spinning freely
+     * Sets knob power to match user spin speed, ideally simulating a knob spinning freely
+     *  - Find knob acceleration
+     *  - Adjust knob power to mirror human input
      *
      * @return Amount of times the knob has travelled over defined range, [-inf, inf]
      */
@@ -149,8 +151,8 @@ public class HapticKnob{
         previousKnobVelocity = knobVelocity;
         knobVelocity = (currentTick - previousTick) / looptimeMs;    //Expressed in ticks per millisecond
         double acceleration = knobVelocity - previousKnobVelocity;
-        
-        double power = knob.getPower() + (Constants.Frictionless.K_P * acceleration / Constants.Frictionless.MAX_ACCELERATION);
+
+        double power = knob.getPower() + (acceleration / Constants.Frictionless.MAX_VELOCITY);
 
         knob.setPower(power);
 
@@ -175,15 +177,15 @@ public class HapticKnob{
 
         knob.setPower(distanceToSnap * Constants.Detent.K_P);
 
-        double temp = currentTick % Constants.Knob.TICKS;                   // get rotation of the knob, regardless of which revolution it's on
-        if(temp < 0) temp += Constants.Knob.TICKS;                          // if the rotation was negative, normalize it to [0, Knob.TICKS]
+        double position = currentTick % Constants.Knob.TICKS;                   // get rotation of the knob, regardless of which revolution it's on
+        if(position < 0) position += Constants.Knob.TICKS;                          // if the rotation was negative, normalize it to [0, Knob.TICKS]
 
-        temp = Math.round(temp / Constants.Detent.SECTION_RANGE_TICKS);
-        if(temp > Constants.Detent.SECTIONS - 1){
-            temp = 0;
+        position = Math.round(position / Constants.Detent.SECTION_RANGE_TICKS);
+        if(position > Constants.Detent.SECTIONS - 1){
+            position = 0;
         }
 
-        return temp;
+        return position;
     }
 
     /**
