@@ -98,9 +98,6 @@ public class HapticKnob{
         this.mode = mode;
 
         switch(mode){
-            case FRICTIONLESS:
-                knob.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                break;
             case OUTPUT:
                 knob.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
                 knob.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

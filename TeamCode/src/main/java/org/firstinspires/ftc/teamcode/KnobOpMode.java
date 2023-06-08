@@ -39,7 +39,7 @@ public class KnobOpMode extends OpMode {
             knob.setMode(modeChain.previousMode());
         }
 
-        knob.drive(gamepad.getRightX());
+        knob.drive(gamepad.getRightX()); 
 
         telemetry.addData("Mode: ", modeChain.getMode());
         telemetry.addData("Current Pos: ", knob.getOutput());
