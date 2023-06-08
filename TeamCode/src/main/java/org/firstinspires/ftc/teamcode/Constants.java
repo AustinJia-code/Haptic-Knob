@@ -4,6 +4,8 @@ public class Constants {
     public static class Knob{
         /** Ticks increase clockwise */
         public static double TICKS = 384.5;
+        public static double RPM = 435;
+        public static double RPS = RPM / 60.0;
     }
     public static class Friction{
         public static double RANGE_DEGREES = 180;
@@ -18,6 +20,9 @@ public class Constants {
         public static double RANGE_DEGREES = 180;
         public static double RANGE_TICKS = RANGE_DEGREES / 360.0 * Knob.TICKS;
         public static double DRIVE_POWER = 0.1;
+        public static double K_P = 0.2;
+        public static double MAX_ACCELERATION = Knob.TICKS / 2.0;
+        public static double MAX_VELOCITY = 0.95 * Knob.RPS * Knob.TICKS;       // Expressed in ticks per millisecond
     }
     public static class Detent{
         public static int SECTIONS = 6;
