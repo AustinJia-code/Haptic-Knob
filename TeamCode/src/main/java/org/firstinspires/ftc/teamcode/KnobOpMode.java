@@ -11,14 +11,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class KnobOpMode extends OpMode {
     HapticKnob knob;
     ModeChain modeChain;
-    int input;
+    int input, loops;
     GamepadEx gamepad;
 
     @Override
     public void init() {
         knob = new HapticKnob(hardwareMap);
         modeChain = new ModeChain();
-        input = 0;
+        input = loops = 0;
         gamepad = new GamepadEx(gamepad1);
 
         telemetry.addLine("Status: Initialized");
@@ -26,10 +26,14 @@ public class KnobOpMode extends OpMode {
     }
 
     @Override
-    public void start(){}
+    public void start(){
+        knob.setMode(Mode.OUTPUT);
+    }
 
     @Override
     public void loop() {
+        loops++;
+
         if(gamepad.wasJustPressed(RIGHT_BUMPER)){
             knob.resetTicks();
             knob.setMode(modeChain.nextMode());
@@ -39,7 +43,9 @@ public class KnobOpMode extends OpMode {
             knob.setMode(modeChain.previousMode());
         }
 
-        knob.drive(gamepad.getRightX()); 
+        //knob.drive(gamepad.getRightX());
+
+        knob.drive(Math.sin(Math.toRadians(loops/360.0)));
 
         telemetry.addData("Mode: ", modeChain.getMode());
         telemetry.addData("Current Pos: ", knob.getOutput());
